@@ -1,0 +1,14 @@
+{
+  "name": "dinner-menu",
+  "version": "1.0.0",
+  "description": "매일 자동 저녁 메뉴 추천 웹사이트 생성",
+  "main": "generate-menu.js",
+  "type": "module",
+  "scripts": {
+    "start": "node generate-menu.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "papaparse": "^5.4.1"
+  }
+}
