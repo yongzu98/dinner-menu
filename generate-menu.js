@@ -4,7 +4,7 @@ import Papa from "papaparse";
 
 // ✅ 시트 이름: menu_data
 const SHEET_URL =
-  "https://docs.google.com/spreadsheets/d/1Gbjrg2d1orbmrYIR5FgMc2lEUVA-5yJuvXrmpeYzuOA/gviz/tq?tqx=out:csv&sheet=menu_data";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSU0jsVP81fqHSu4D6Ag_3oIwgj8DXwDHiBl4sXVuNBXAozbbC33h6ewyCu4IWkrzGoHJA2r45V_sji/pub?gid=1614121062&single=true&output=csv";
 
 // 메뉴 카드 하나 만들기
 function generateHTMLBlock(menu) {
