@@ -4,7 +4,7 @@ import Papa from "papaparse";
 
 // Google Sheets에서 메뉴 데이터를 가져올 주소
 const SHEET_URL =
-  "https://docs.google.com/spreadsheets/d/1Gbjrg2d1orbmrYIR5FgMc2lEUVA-5yJuvXrmpeYzuOA/gviz/tq?tqx=out:csv&sheet=menu%20data";
+  "https://docs.google.com/spreadsheets/d/1Gbjrg2d1orbmrYIR5FgMc2lEUVA-5yJuvXrmpeYzuOA/gviz/tq?tqx=out:csv&sheet=menu_data";
 
 // 개별 메뉴 HTML 블록 생성
 function generateHTMLBlock(menu) {
