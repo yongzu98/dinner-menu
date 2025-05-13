@@ -17,7 +17,7 @@ function generateHTMLBlock(menu) {
       </a>
       <p><strong>주요 재료:</strong> ${menu['주요재료']}</p>
       ${
-        menu['레시피영상링크'] && menu['레시피영상링크'].trim() !== '-'
+        menu['레시피영상링크'] && menu['레시피영상링크'].trim() && menu['레시피영상링크'].trim() !== '-'
           ? `<p><strong>레시피 영상:</strong> <a href="${menu['레시피영상링크']}" target="_blank">영상 보러가기</a></p>`
           : ''
       }
@@ -57,14 +57,17 @@ async function run() {
     const parsed = Papa.parse(csv, { header: true });
 
     const allRows = parsed.data;
+    console.log("📊 전체 행 수:", allRows.length);
 
-    // 유효한 메뉴만 필터링
+    // 조건 완화된 필터링
     const menus = allRows.filter(m =>
-      m['메뉴명'] && m['메뉴명'].trim() !== '-' &&
-      m['영문명'] && m['영문명'].trim() !== '-' &&
-      m['썸네일링크'] && m['썸네일링크'].trim() !== '-' &&
-      m['주요재료'] && m['주요재료'].trim() !== '-'
+      m['메뉴명'] &&
+      m['영문명'] &&
+      m['썸네일링크'] &&
+      m['주요재료']
     );
+
+    console.log("✅ 유효한 메뉴 수:", menus.length);
 
     if (menus.length === 0) {
       const failHTML = `
@@ -87,7 +90,7 @@ async function run() {
     const finalHTML = generateFinalHTML(htmlBlocks);
 
     fs.writeFileSync("index.html", finalHTML, "utf-8");
-    console.log("✅ index.html 생성 완료");
+    console.log("🎉 index.html 생성 완료!");
   } catch (err) {
     console.error("❌ 오류 발생:", err);
   }
