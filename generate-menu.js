@@ -2,16 +2,19 @@ import fs from "fs";
 import fetch from "node-fetch";
 import Papa from "papaparse";
 
-// ✅ 시트 이름: menu_data
+// ✅ 시트 URL (CSV 형식)
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSU0jsVP81fqHSu4D6Ag_3oIwgj8DXwDHiBl4sXVuNBXAozbbC33h6ewyCu4IWkrzGoHJA2r45V_sji/pub?gid=1614121062&single=true&output=csv";
 
-// 메뉴 카드 하나 만들기
+// ✅ 메뉴 카드 하나 생성
 function generateHTMLBlock(menu) {
+  const link = `html_files/${menu['영문명']}.html`;
   return `
     <div class="menu-block">
-      <h2><a href="${menu['메뉴명']}.html">${menu['메뉴명']}</a></h2>
-      <img src="${menu['썸네일링크']}" alt="${menu['메뉴명']}" style="max-width:300px;">
+      <h2><a href="${link}" target="_blank">${menu['메뉴명']}</a></h2>
+      <a href="${link}" target="_blank">
+        <img src="${menu['썸네일링크']}" alt="${menu['메뉴명']}" style="max-width:300px;">
+      </a>
       <p><strong>주요 재료:</strong> ${menu['주요재료']}</p>
       ${
         menu['레시피영상링크'] && menu['레시피영상링크'].trim() !== '-'
@@ -22,7 +25,7 @@ function generateHTMLBlock(menu) {
   `;
 }
 
-// 전체 index.html 생성
+// ✅ 전체 index.html 생성
 function generateFinalHTML(innerBlocks) {
   const updateTime = new Date().toISOString();
   return `
@@ -46,6 +49,7 @@ function generateFinalHTML(innerBlocks) {
   `;
 }
 
+// ✅ 실행 함수
 async function run() {
   try {
     const res = await fetch(SHEET_URL);
@@ -57,6 +61,7 @@ async function run() {
     // 유효한 메뉴만 필터링
     const menus = allRows.filter(m =>
       m['메뉴명'] && m['메뉴명'].trim() !== '-' &&
+      m['영문명'] && m['영문명'].trim() !== '-' &&
       m['썸네일링크'] && m['썸네일링크'].trim() !== '-' &&
       m['주요재료'] && m['주요재료'].trim() !== '-'
     );
