@@ -8,8 +8,8 @@ const SHEET_URL =
 
 // ✅ 메뉴 카드 하나 생성
 function generateHTMLBlock(menu) {
-  const link = html_files/${menu['영문명']}.html;
-  return 
+  const link = `html_files/${menu['영문명']}.html`;
+  return `
     <div class="menu-block">
       <h2><a href="${link}" target="_blank">${menu['메뉴명']}</a></h2>
       <a href="${link}" target="_blank">
@@ -18,17 +18,17 @@ function generateHTMLBlock(menu) {
       <p><strong>주요 재료:</strong> ${menu['주요재료']}</p>
       ${
         menu['레시피영상링크'] && menu['레시피영상링크'].trim() && menu['레시피영상링크'].trim() !== '-'
-          ? <p><strong>레시피 영상:</strong> <a href="${menu['레시피영상링크']}" target="_blank">영상 보러가기</a></p>
+          ? `<p><strong>레시피 영상:</strong> <a href="${menu['레시피영상링크']}" target="_blank">영상 보러가기</a></p>`
           : ''
       }
     </div>
-  ;
+  `;
 }
 
 // ✅ 전체 index.html 생성
 function generateFinalHTML(innerBlocks) {
   const updateTime = new Date().toISOString();
-  return 
+  return `
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -46,7 +46,7 @@ function generateFinalHTML(innerBlocks) {
   <p style="color: #999; font-size: 0.9rem;">최종 업데이트: ${updateTime}</p>
 </body>
 </html>
-  ;
+  `;
 }
 
 // ✅ 실행 함수
@@ -70,7 +70,7 @@ async function run() {
     console.log("✅ 유효한 메뉴 수:", menus.length);
 
     if (menus.length === 0) {
-      const failHTML = 
+      const failHTML = `
         <!DOCTYPE html>
         <html lang="ko">
         <head><meta charset="UTF-8"><title>에러</title></head>
@@ -79,7 +79,7 @@ async function run() {
           <p>Google Sheets에 유효한 메뉴가 없습니다.</p>
         </body>
         </html>
-      ;
+      `;
       fs.writeFileSync("index.html", failHTML);
       return;
     }
