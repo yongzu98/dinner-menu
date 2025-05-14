@@ -12,15 +12,8 @@ function generateHTMLBlock(menu) {
   return `
     <div class="menu-block">
       <h2><a href="${link}" target="_blank">${menu['메뉴명']}</a></h2>
-      <a href="${link}" target="_blank">
-        <img src="${menu['썸네일링크']}" alt="${menu['메뉴명']}" style="max-width:300px;">
-      </a>
       <p><strong>주요 재료:</strong> ${menu['주요재료']}</p>
-      ${
-        menu['레시피영상링크'] && menu['레시피영상링크'].trim() && menu['레시피영상링크'].trim() !== '-'
-          ? `<p><strong>레시피 영상:</strong> <a href="${menu['레시피영상링크']}" target="_blank">영상 보러가기</a></p>`
-          : ''
-      }
+      <p><strong>난이도:</strong> ${menu['난이도']}</p>
     </div>
   `;
 }
@@ -37,7 +30,6 @@ function generateFinalHTML(innerBlocks) {
   <style>
     body { font-family: sans-serif; max-width: 700px; margin: auto; padding: 1rem; }
     .menu-block { border-bottom: 1px solid #ccc; padding: 1rem 0; }
-    img { display: block; margin-top: 0.5rem; }
   </style>
 </head>
 <body>
@@ -59,12 +51,12 @@ async function run() {
     const allRows = parsed.data;
     console.log("📊 전체 행 수:", allRows.length);
 
-    // 조건 완화된 필터링
+    // 유효한 행 필터링
     const menus = allRows.filter(m =>
       m['메뉴명'] &&
       m['영문명'] &&
-      m['썸네일링크'] &&
-      m['주요재료']
+      m['주요재료'] &&
+      m['난이도']
     );
 
     console.log("✅ 유효한 메뉴 수:", menus.length);
@@ -84,8 +76,32 @@ async function run() {
       return;
     }
 
-    // 3개 랜덤 선택
-    const selected = menus.sort(() => 0.5 - Math.random()).slice(0, 3);
+    // ✅ 난이도 '하' 메뉴를 최소 1개 포함하도록 3개 선택
+    let selected = [];
+    let attempts = 0;
+    while (attempts < 10) {
+      const shuffled = menus.sort(() => 0.5 - Math.random());
+      const candidates = shuffled.slice(0, 3);
+      if (candidates.some(m => m['난이도'].trim() === '하')) {
+        selected = candidates;
+        break;
+      }
+      attempts++;
+    }
+
+    // 실패 시 가장 쉬운 메뉴 1개 + 나머지 2개 랜덤
+    if (selected.length === 0) {
+      const easy = menus.filter(m => m['난이도'].trim() === '하');
+      const rest = menus.filter(m => m['난이도'].trim() !== '하');
+      if (easy.length > 0 && rest.length > 1) {
+        const easyPick = easy[Math.floor(Math.random() * easy.length)];
+        const restPicks = rest.sort(() => 0.5 - Math.random()).slice(0, 2);
+        selected = [easyPick, ...restPicks];
+      } else {
+        selected = menus.sort(() => 0.5 - Math.random()).slice(0, 3); // fallback
+      }
+    }
+
     const htmlBlocks = selected.map(generateHTMLBlock).join("\n");
     const finalHTML = generateFinalHTML(htmlBlocks);
 
