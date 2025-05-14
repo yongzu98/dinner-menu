@@ -28,26 +28,27 @@ function saveRecommendationHistory(menus) {
   fs.writeFileSync(HISTORY_FILE, JSON.stringify(history.slice(-3), null, 2));
 }
 
-// ✅ 필터 적용
+// ✅ 최근 추천된 메뉴 제외
 function applyFilters(menus) {
   const recent = loadRecentHistory();
   return menus.filter(m => !recent.includes(m['영문명']));
 }
 
-// ✅ 지금 단계에선: 조건 기반 랜덤 추천 (GPT로 바뀔 자리)
+// ✅ 변경된 추천 로직: 무작위 3개 중 반드시 난이도 '하' 하나 포함
 function selectMenus(menus) {
-  const easy = menus.filter(m => m['난이도'] === '하');
-  const others = menus.filter(m => m['난이도'] !== '하');
+  const maxAttempts = 10;
 
-  if (easy.length === 0 || others.length < 2) {
-    throw new Error("추천 가능한 메뉴가 부족합니다.");
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const shuffled = menus.sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, 3);
+    const hasEasy = selected.some(m => m['난이도'] === '하');
+
+    if (hasEasy) {
+      return selected;
+    }
   }
 
-  const oneEasy = easy.sort(() => 0.5 - Math.random()).slice(0, 1);
-  const twoOthers = others.sort(() => 0.5 - Math.random())
-                          .filter(m => m['영문명'] !== oneEasy[0]['영문명'])
-                          .slice(0, 2);
-  return [...oneEasy, ...twoOthers];
+  throw new Error("조건을 만족하는 메뉴를 찾을 수 없습니다. 메뉴 수를 확인해주세요.");
 }
 
 // ✅ HTML 생성
@@ -94,7 +95,7 @@ async function run() {
   try {
     const menus = await loadMenuData();
     const filtered = applyFilters(menus);
-    const selected = selectMenus(filtered); // 🔁 여기만 나중에 GPT 기반 추천으로 대체하면 됨
+    const selected = selectMenus(filtered); // 🔁 이 부분만 교체됨
     await generateAndSaveHTML(selected);
     saveRecommendationHistory(selected);
     console.log("🎉 index.html 생성 완료!");
