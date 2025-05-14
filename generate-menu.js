@@ -28,38 +28,37 @@ function saveRecommendationHistory(menus) {
   fs.writeFileSync(HISTORY_FILE, JSON.stringify(history.slice(-3), null, 2));
 }
 
-// ✅ 최근 추천된 메뉴 제외
+// ✅ 최근 추천 제외 필터
 function applyFilters(menus) {
   const recent = loadRecentHistory();
   return menus.filter(m => !recent.includes(m['영문명']));
 }
 
-// ✅ 변경된 추천 로직: 무작위 3개 중 반드시 난이도 '하' 하나 포함
+// ✅ 새로운 추천 로직: 난이도 '하' 포함 보장 + 중복 제거
 function selectMenus(menus) {
   const easyMenus = menus.filter(m => m['난이도'] === '하');
-  const otherMenus = menus;
-
   if (easyMenus.length === 0) {
     throw new Error("난이도 '하' 메뉴가 없습니다.");
   }
 
   const selected = [];
 
-  // 1. 난이도 '하'에서 하나 뽑기
+  // 1. '하' 난이도 1개 무조건 선택
   const easy = easyMenus[Math.floor(Math.random() * easyMenus.length)];
   selected.push(easy);
 
-  // 2. 전체에서 나머지 2개를 무작위로 뽑되, 중복 제외
-  const remaining = otherMenus.filter(m => m['영문명'] !== easy['영문명']);
+  // 2. 전체에서 easy 제외한 후 나머지 2개 무작위 선택
+  const remaining = menus.filter(m => m['영문명'] !== easy['영문명']);
   const shuffled = remaining.sort(() => 0.5 - Math.random());
   selected.push(...shuffled.slice(0, 2));
 
   return selected;
 }
 
-
-// ✅ HTML 생성
+// ✅ HTML 블록 생성
 function generateHTMLBlock(menu) {
+  if (!menu || !menu['메뉴명'] || !menu['영문명']) return '';
+
   const link = `html_files/${menu['영문명']}.html`;
   const img = `images/${menu['영문명']}.jpg`;
 
@@ -92,23 +91,6 @@ img { display: block; margin-top: 0.5rem; }
 </body></html>`;
 }
 
+// ✅ index.html 생성 및 저장
 async function generateAndSaveHTML(menus) {
-  const blocks = menus.map(generateHTMLBlock).join("\n");
-  const html = generateFinalHTML(blocks);
-  fs.writeFileSync("index.html", html, "utf-8");
-}
-
-async function run() {
-  try {
-    const menus = await loadMenuData();
-    const filtered = applyFilters(menus);
-    const selected = selectMenus(filtered); // 🔁 이 부분만 교체됨
-    await generateAndSaveHTML(selected);
-    saveRecommendationHistory(selected);
-    console.log("🎉 index.html 생성 완료!");
-  } catch (err) {
-    console.error("❌ 오류 발생:", err);
-  }
-}
-
-run();
+  const validMenus
