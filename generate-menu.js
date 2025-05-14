@@ -36,20 +36,27 @@ function applyFilters(menus) {
 
 // ✅ 변경된 추천 로직: 무작위 3개 중 반드시 난이도 '하' 하나 포함
 function selectMenus(menus) {
-  const maxAttempts = 10;
+  const easyMenus = menus.filter(m => m['난이도'] === '하');
+  const otherMenus = menus;
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const shuffled = menus.sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 3);
-    const hasEasy = selected.some(m => m['난이도'] === '하');
-
-    if (hasEasy) {
-      return selected;
-    }
+  if (easyMenus.length === 0) {
+    throw new Error("난이도 '하' 메뉴가 없습니다.");
   }
 
-  throw new Error("조건을 만족하는 메뉴를 찾을 수 없습니다. 메뉴 수를 확인해주세요.");
+  const selected = [];
+
+  // 1. 난이도 '하'에서 하나 뽑기
+  const easy = easyMenus[Math.floor(Math.random() * easyMenus.length)];
+  selected.push(easy);
+
+  // 2. 전체에서 나머지 2개를 무작위로 뽑되, 중복 제외
+  const remaining = otherMenus.filter(m => m['영문명'] !== easy['영문명']);
+  const shuffled = remaining.sort(() => 0.5 - Math.random());
+  selected.push(...shuffled.slice(0, 2));
+
+  return selected;
 }
+
 
 // ✅ HTML 생성
 function generateHTMLBlock(menu) {
