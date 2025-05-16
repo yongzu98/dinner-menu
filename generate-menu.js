@@ -2,7 +2,7 @@ import fs from "fs";
 import fetch from "node-fetch";
 import Papa from "papaparse";
 
-// ✅ CSV export URL (공유 상태는 "링크 있는 모든 사용자 보기")
+// ✅ CSV 주소
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSU0jsVP81fqHSu4DcIUmrrDghvmjbK0SgD0lZfJt9ISPrZrgwP79FT3v2XliTZrjcQQAvDQZFTcIBR/pub?output=csv";
 
@@ -17,16 +17,9 @@ async function fetchSheetData() {
   return parsed.data;
 }
 
-// ✅ 난이도 '하' 포함 3개 랜덤 선택
-function selectMenusWithEasy(data) {
-  const maxTries = 100;
-  for (let i = 0; i < maxTries; i++) {
-    const shuffled = [...data].sort(() => Math.random() - 0.5);
-    const selected = shuffled.slice(0, 3);
-    const hasEasy = selected.some((row) => row["난이도"] === "하");
-    if (hasEasy) return selected;
-  }
-  throw new Error("난이도 '하'가 포함된 3개 메뉴를 찾을 수 없습니다.");
+// ✅ 조건 없이 랜덤 3개 선택
+function selectRandomMenus(data) {
+  return [...data].sort(() => Math.random() - 0.5).slice(0, 3);
 }
 
 // ✅ index.html 생성
@@ -36,7 +29,7 @@ function generateHTML(menus) {
       const name = row["메뉴명"];
       const eng = row["영문명"];
       const thumb = row["썸네일링크"];
-      const category = row["소분류"]; // 재료가 없는 상태에선 대체 정보로 활용
+      const category = row["소분류"];
       const link = `./html_files/${eng}.html`;
 
       return `
@@ -99,14 +92,14 @@ function generateHTML(menus) {
   `;
 }
 
-// ✅ 메인 실행
+// ✅ 실행
 (async () => {
   try {
     const data = await fetchSheetData();
-    const selectedMenus = selectMenusWithEasy(data);
+    const selectedMenus = selectRandomMenus(data);
     const html = generateHTML(selectedMenus);
     fs.writeFileSync("index.html", html, "utf-8");
-    console.log("✅ index.html 생성 완료 (메뉴 + 이미지 + 링크 포함)");
+    console.log("✅ index.html 생성 완료 (무작위 3개 메뉴)");
   } catch (err) {
     console.error("❌ 오류 발생:", err.message);
   }
