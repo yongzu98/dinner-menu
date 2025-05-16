@@ -2,11 +2,11 @@ name: Daily GPT Menu Generator
 
 on:
   schedule:
-    - cron: '30 6 * * *'  # 매일 오후 3시 30분 KST (UTC 기준 오전 6:30)
-  workflow_dispatch:       # 수동 실행도 가능하게 설정
+    - cron: '30 6 * * *'  # 매일 오후 3시 30분 KST
+  workflow_dispatch:
 
 permissions:
-  contents: write          # GitHub에 파일 커밋 권한
+  contents: write
 
 jobs:
   build:
@@ -29,10 +29,8 @@ jobs:
 
       - name: 생성된 index.html 커밋 및 푸시
         run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
           git add index.html
-          git commit -m "자동 업데이트: $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes"
-          git push origin HEAD:${{ github.ref }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git commit -m "자동 업데이트: $(date +'%Y-%m-%d %H:%M:%S')"
+          git push
