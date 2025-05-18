@@ -1,12 +1,12 @@
-name: Daily GPT Menu Generator
+  name: Daily GPT Menu Generator
 
 on:
   schedule:
-    - cron: '30 6 * * *'  # 매일 오후 3시 30분 (KST)
-  workflow_dispatch:       # 수동 실행도 가능
+    - cron: '30 6 * * *'  # 매일 오후 3시 30분 KST
+  workflow_dispatch:
 
 permissions:
-  contents: write          # 푸시 권한 필요
+  contents: write
 
 jobs:
   build:
@@ -21,16 +21,19 @@ jobs:
         with:
           node-version: '18'
 
-      - name: 필요한 라이브러리 설치
+      - name: 라이브러리 설치
         run: npm install
 
-      - name: 메뉴 추천 스크립트 실행
-        run: npm start
+      - name: 메뉴 생성 실행
+        run: node generate-menu.js
 
-      - name: 생성된 index.html 커밋 및 푸시
+      - name: 변경 사항 있을 때만 커밋
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add index.html
-          git commit -m "자동 업데이트: $(date +'%Y-%m-%d %H:%M:%S')"
-          git push
+          git add index.html prev.json
+          if git diff --cached --quiet; then
+            echo "⚠️ 변경 사항 없음. 푸시 생략"
+          else
+            git commit -m "🔄 Update daily menu"
+            git push
