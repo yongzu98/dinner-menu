@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import Papa from "papaparse";
 
 // ✅ Google Sheet CSV URL
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSU0jsVP81fqHSu4DHUvLPyrCqgrKFd1ZTbdI_w4D4BGrONo-DQlcpwPGChNLGvTQ/pub?gid=0&single=true&output=csv";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1Gbjrg2d1orbmrYIR5FgMc2lEUVA-5yJuvXrmpeYzuOA/gviz/tq?tqx=out:csv";
 const PREV_FILE = "prev.json";
 
 function getRandomItems(arr, count) {
