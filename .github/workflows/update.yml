@@ -1,4 +1,4 @@
-  name: Daily GPT Menu Generator
+name: Daily GPT Menu Generator
 
 on:
   schedule:
