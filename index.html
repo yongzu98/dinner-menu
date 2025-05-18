@@ -5,10 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>오늘의 추천 메뉴</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; }
-    .menu { margin-bottom: 40px; }
-    img { width: 300px; border-radius: 12px; cursor: pointer; }
-    h2, p { margin: 10px 0; }
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #f5f5f5;
+      padding: 40px 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 40px;
+    }
+    .menu {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      max-width: 500px;
+      margin: 0 auto 40px auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .menu img {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .menu h2 {
+      font-size: 20px;
+      margin: 10px 0 6px;
+      color: #222;
+    }
+    .menu p {
+      font-size: 14px;
+      color: #666;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 10px;
+      }
+      .menu {
+        margin-bottom: 24px;
+      }
+    }
   </style>
   <script src="track-click.js"></script>
 </head>
@@ -16,27 +56,27 @@
   <h1>🍽 오늘의 추천 메뉴</h1>
   
       <div class="menu">
-        <a href="html_files/Diner-style_Braised_Tofu.html" target="_blank" onclick="trackClick('Diner-style_Braised_Tofu')">
-          <img src="images/Diner-style_Braised_Tofu.jpg" alt="기사식당 두부조림">
+        <a href="html_files/Squid_Radish_Soup.html" target="_blank" onclick="trackClick('Squid_Radish_Soup')">
+          <img src="menu-images/Squid_Radish_Soup.jpg" alt="오징어무국">
         </a>
-        <h2><a href="html_files/Diner-style_Braised_Tofu.html" target="_blank" onclick="trackClick('Diner-style_Braised_Tofu')">기사식당 두부조림</a></h2>
+        <h2><a href="html_files/Squid_Radish_Soup.html" target="_blank" onclick="trackClick('Squid_Radish_Soup')">오징어무국</a></h2>
         <p>난이도: 하 | 🎥 영상 있음</p>
       </div>
 
       <div class="menu">
-        <a href="html_files/Spicy_Stir-fried_Chicken.html" target="_blank" onclick="trackClick('Spicy_Stir-fried_Chicken')">
-          <img src="images/Spicy_Stir-fried_Chicken.jpg" alt="닭갈비">
+        <a href="html_files/Dried_Pollack_Soup.html" target="_blank" onclick="trackClick('Dried_Pollack_Soup')">
+          <img src="menu-images/Dried_Pollack_Soup.jpg" alt="황태국">
         </a>
-        <h2><a href="html_files/Spicy_Stir-fried_Chicken.html" target="_blank" onclick="trackClick('Spicy_Stir-fried_Chicken')">닭갈비</a></h2>
-        <p>난이도: 상 | 🎥 영상 있음</p>
+        <h2><a href="html_files/Dried_Pollack_Soup.html" target="_blank" onclick="trackClick('Dried_Pollack_Soup')">황태국</a></h2>
+        <p>난이도: 하 | 🎥 영상 있음</p>
       </div>
 
       <div class="menu">
-        <a href="html_files/Scorched_Rice_Chicken_Soup.html" target="_blank" onclick="trackClick('Scorched_Rice_Chicken_Soup')">
-          <img src="images/Scorched_Rice_Chicken_Soup.jpg" alt="누룽지삼계탕">
+        <a href="html_files/Spicy_Beef_Soup.html" target="_blank" onclick="trackClick('Spicy_Beef_Soup')">
+          <img src="menu-images/Spicy_Beef_Soup.jpg" alt="육개장">
         </a>
-        <h2><a href="html_files/Scorched_Rice_Chicken_Soup.html" target="_blank" onclick="trackClick('Scorched_Rice_Chicken_Soup')">누룽지삼계탕</a></h2>
-        <p>난이도: 상 | 🎥 영상 있음</p>
+        <h2><a href="html_files/Spicy_Beef_Soup.html" target="_blank" onclick="trackClick('Spicy_Beef_Soup')">육개장</a></h2>
+        <p>난이도: 상</p>
       </div>
 </body>
 </html>
