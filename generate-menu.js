@@ -4,7 +4,7 @@ import Papa from "papaparse";
 
 // ✅ Google Sheets CSV 공개 링크
 const SHEET_URL =
-  "https://docs.google.com/spreadsheets/d/1Gbjrg2d1orbmrYIR5FgMc2lEUVA-5yJuvXrmpeYzuOA/gviz/tq?tqx=out:csv";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSU0jsVP81fqHSu4D6Ag_3oIwgj8DXwDHiBl4sXVuNBXAozbbC33h6ewyCu4IWkrzGoHJA2r45V_sji/pub?gid=1614121062&single=true&output=csv";
 const PREV_FILE = "prev.json";
 
 function getRandomItems(arr, count) {
