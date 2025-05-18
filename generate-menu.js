@@ -2,33 +2,45 @@ import fs from "fs";
 import fetch from "node-fetch";
 import Papa from "papaparse";
 
-// ✅ Google Sheet CSV URL
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1Gbjrg2d1orbmrYIR5FgMc2lEUVA-5yJuvXrmpeYzuOA/gviz/tq?tqx=out:csv";
+// ✅ Google Sheets CSV 링크 (공유 설정: 누구나 보기)
+const SHEET_URL =
+  "https://docs.google.com/spreadsheets/d/1Gbjrg2d1orbmrYIR5FgMc2lEUVA-5yJuvXrmpeYzuOA/gviz/tq?tqx=out:csv";
 const PREV_FILE = "prev.json";
 
+// ✅ 배열에서 랜덤으로 N개 추출
 function getRandomItems(arr, count) {
-  const shuffled = arr.sort(() => 0.5 - Math.random());
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
 }
 
 (async () => {
   try {
-    // ✅ Step 1. 데이터 요청
+    // 📡 Step 1: CSV 요청
     console.log("📡 CSV 데이터 요청 중...");
     const res = await fetch(SHEET_URL);
     if (!res.ok) throw new Error(`📛 CSV 요청 실패: ${res.statusText}`);
     const csv = await res.text();
 
-    // ✅ Step 2. CSV 파싱
+    // 📊 Step 2: 파싱 및 컬럼 키 정리
     console.log("📊 CSV 데이터 파싱 중...");
-    const { data, errors } = Papa.parse(csv, { header: true });
+    const { data: rawData, errors } = Papa.parse(csv, { header: true });
     if (errors.length > 0) {
       console.error("❌ CSV 파싱 오류 발생:", errors);
       return;
     }
 
+    // 열 이름 공백 제거 (ex: " 영문명 " → "영문명")
+    const data = rawData.map(row => {
+      const cleaned = {};
+      for (const key in row) {
+        cleaned[key.trim()] = row[key]?.trim(); // 값도 trim 처리
+      }
+      return cleaned;
+    });
+
+    // ✅ Step 3: 유효한 메뉴 필터링
     const validMenus = data.filter(
-      (item) => item["영문명"]?.trim() && item["난이도"]?.trim() && item["영문명"] !== "-"
+      (item) => item["영문명"] && item["난이도"] && item["영문명"] !== "-"
     );
 
     if (validMenus.length < 3) {
@@ -36,17 +48,17 @@ function getRandomItems(arr, count) {
       return;
     }
 
-    // ✅ Step 3. 어제 메뉴 불러오기
+    // ✅ Step 4: 전날 추천 메뉴 불러오기
     let prevMenus = [];
     if (fs.existsSync(PREV_FILE)) {
       try {
         prevMenus = JSON.parse(fs.readFileSync(PREV_FILE, "utf8"));
       } catch (e) {
-        console.warn("⚠️ 이전 추천 파일을 파싱하는 데 실패했습니다. 무시하고 계속 진행합니다.");
+        console.warn("⚠️ 이전 prev.json 파싱 실패. 무시하고 진행.");
       }
     }
 
-    // ✅ Step 4. 오늘 메뉴 선택
+    // ✅ Step 5: 오늘의 메뉴 선택
     let todaysMenus = [];
     let tries = 0;
     while (tries++ < 100) {
@@ -60,20 +72,14 @@ function getRandomItems(arr, count) {
     }
 
     if (todaysMenus.length < 3) {
-      console.error("❌ 조건을 만족하는 메뉴를 찾지 못했습니다. 메뉴 수가 부족하거나 조건이 과도할 수 있습니다.");
+      console.error("❌ 조건을 만족하는 메뉴를 찾지 못했습니다. 메뉴 수가 부족하거나 중복 조건이 과도할 수 있습니다.");
       return;
     }
 
-    // ✅ Step 5. prev.json 저장
-    try {
-      fs.writeFileSync(PREV_FILE, JSON.stringify(todaysMenus.map((m) => m["영문명"])), "utf8");
-      console.log("📝 prev.json 저장 완료");
-    } catch (e) {
-      console.error("❌ prev.json 저장 실패:", e);
-      return;
-    }
+    // ✅ Step 6: prev.json 저장
+    fs.writeFileSync(PREV_FILE, JSON.stringify(todaysMenus.map((m) => m["영문명"])), "utf8");
 
-    // ✅ Step 6. index.html 생성
+    // ✅ Step 7: index.html 생성
     console.log("🛠 index.html 생성 중...");
     const html = `
 <!DOCTYPE html>
