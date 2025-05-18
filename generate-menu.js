@@ -2,12 +2,12 @@ import fs from "fs";
 import fetch from "node-fetch";
 import Papa from "papaparse";
 
-// ✅ Google Sheets CSV 링크 (공유 설정: 누구나 보기)
+// ✅ Google Sheets CSV 링크 (공개 권한: 링크 있는 사용자 보기 가능)
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1Gbjrg2d1orbmrYIR5FgMc2lEUVA-5yJuvXrmpeYzuOA/gviz/tq?tqx=out:csv";
 const PREV_FILE = "prev.json";
 
-// ✅ 배열에서 랜덤으로 N개 추출
+// ✅ 랜덤 추출 함수
 function getRandomItems(arr, count) {
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
@@ -21,7 +21,7 @@ function getRandomItems(arr, count) {
     if (!res.ok) throw new Error(`📛 CSV 요청 실패: ${res.statusText}`);
     const csv = await res.text();
 
-    // 📊 Step 2: 파싱 및 컬럼 키 정리
+    // 📊 Step 2: CSV 파싱 및 정리
     console.log("📊 CSV 데이터 파싱 중...");
     const { data: rawData, errors } = Papa.parse(csv, { header: true });
     if (errors.length > 0) {
@@ -29,16 +29,14 @@ function getRandomItems(arr, count) {
       return;
     }
 
-    // 열 이름 공백 제거 (ex: " 영문명 " → "영문명")
     const data = rawData.map(row => {
       const cleaned = {};
       for (const key in row) {
-        cleaned[key.trim()] = row[key]?.trim(); // 값도 trim 처리
+        cleaned[key.trim()] = row[key]?.trim();
       }
       return cleaned;
     });
 
-    // ✅ Step 3: 유효한 메뉴 필터링
     const validMenus = data.filter(
       (item) => item["영문명"] && item["난이도"] && item["영문명"] !== "-"
     );
@@ -48,38 +46,45 @@ function getRandomItems(arr, count) {
       return;
     }
 
-    // ✅ Step 4: 전날 추천 메뉴 불러오기
+    // 📁 Step 3: 이전 추천 메뉴 불러오기
     let prevMenus = [];
     if (fs.existsSync(PREV_FILE)) {
       try {
         prevMenus = JSON.parse(fs.readFileSync(PREV_FILE, "utf8"));
       } catch (e) {
-        console.warn("⚠️ 이전 prev.json 파싱 실패. 무시하고 진행.");
+        console.warn("⚠️ prev.json 파싱 실패. 무시하고 진행.");
       }
     }
 
-    // ✅ Step 5: 오늘의 메뉴 선택
+    // 🎯 Step 4: 메뉴 선택 (난이도 '하' 1개 포함 보장)
+    const easyMenus = validMenus.filter((item) => item["난이도"] === "하");
     let todaysMenus = [];
     let tries = 0;
+
     while (tries++ < 100) {
-      const candidates = getRandomItems(validMenus, 3);
-      const hasEasy = candidates.some((item) => item["난이도"] === "하");
-      const noOverlap = candidates.every((item) => !prevMenus.includes(item["영문명"]));
-      if (hasEasy && noOverlap) {
-        todaysMenus = candidates;
+      const easyPick = getRandomItems(easyMenus, 1)[0];
+      const remaining = validMenus.filter((item) =>
+        item["영문명"] !== easyPick["영문명"] && !prevMenus.includes(item["영문명"])
+      );
+      const others = getRandomItems(remaining, 2);
+      const allMenus = [easyPick, ...others];
+
+      const noOverlap = allMenus.every((item) => !prevMenus.includes(item["영문명"]));
+      if (others.length === 2 && noOverlap) {
+        todaysMenus = allMenus;
         break;
       }
     }
 
     if (todaysMenus.length < 3) {
-      console.error("❌ 조건을 만족하는 메뉴를 찾지 못했습니다. 메뉴 수가 부족하거나 중복 조건이 과도할 수 있습니다.");
+      console.error("❌ 조건 만족 실패: 메뉴 수 부족 또는 중복 조건 과도");
       return;
     }
 
-    // ✅ Step 6: prev.json 저장
+    // 📝 Step 5: prev.json 저장
     fs.writeFileSync(PREV_FILE, JSON.stringify(todaysMenus.map((m) => m["영문명"])), "utf8");
 
-    // ✅ Step 7: index.html 생성
+    // 🧾 Step 6: index.html 생성
     console.log("🛠 index.html 생성 중...");
     const html = `
 <!DOCTYPE html>
