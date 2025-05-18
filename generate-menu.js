@@ -2,7 +2,7 @@ import fs from "fs";
 import fetch from "node-fetch";
 import Papa from "papaparse";
 
-// ✅ Google Sheets CSV 공개 링크
+// ✅ 실제 Google Sheets "웹에 게시" CSV 링크
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSU0jsVP81fqHSu4D6Ag_3oIwgj8DXwDHiBl4sXVuNBXAozbbC33h6ewyCu4IWkrzGoHJA2r45V_sji/pub?gid=1614121062&single=true&output=csv";
 const PREV_FILE = "prev.json";
@@ -20,7 +20,7 @@ function getRandomItems(arr, count) {
     if (!res.ok) throw new Error(`📛 CSV 요청 실패: ${res.statusText}`);
     const csv = await res.text();
 
-    // 📊 Step 2: CSV 파싱
+    // 📊 Step 2: 파싱
     console.log("📊 CSV 데이터 파싱 중...");
     const { data: rawData, errors } = Papa.parse(csv, {
       header: true,
@@ -29,11 +29,11 @@ function getRandomItems(arr, count) {
     });
 
     if (errors.length > 0) {
-      console.error("❌ CSV 파싱 오류 발생:", errors);
+      console.error("❌ CSV 파싱 오류:", errors);
       return;
     }
 
-    // 🧹 Step 3: 데이터 정제
+    // 🧹 Step 3: 공백 제거
     const data = rawData.map(row => {
       const cleaned = {};
       for (const key in row) {
@@ -42,7 +42,6 @@ function getRandomItems(arr, count) {
       return cleaned;
     });
 
-    // 🧪 Step 4: 유효 메뉴 필터링
     const validMenus = data.filter(
       (item) => item["영문명"] && item["난이도"] && item["영문명"] !== "-"
     );
@@ -50,11 +49,11 @@ function getRandomItems(arr, count) {
     console.log(`✅ 유효한 메뉴 수: ${validMenus.length}`);
 
     if (validMenus.length < 3) {
-      console.error("❌ 유효한 메뉴가 3개 미만입니다. 필수 열 누락 또는 비어 있음.");
+      console.error("❌ 유효한 메뉴가 3개 미만입니다.");
       return;
     }
 
-    // 📁 Step 5: prev.json 불러오기
+    // 📁 Step 4: prev.json 불러오기
     let prevMenus = [];
     if (fs.existsSync(PREV_FILE)) {
       try {
@@ -64,9 +63,8 @@ function getRandomItems(arr, count) {
       }
     }
 
-    // 🎯 Step 6: 오늘의 메뉴 추출 (난이도 하 포함)
+    // 🎯 Step 5: 메뉴 추출
     const easyMenus = validMenus.filter((item) => item["난이도"] === "하");
-
     if (easyMenus.length === 0) {
       console.error("❌ '난이도 하' 메뉴가 없습니다.");
       return;
@@ -77,15 +75,16 @@ function getRandomItems(arr, count) {
 
     while (tries++ < 100) {
       const easyPick = getRandomItems(easyMenus, 1)[0];
-
-      const remaining = validMenus.filter((item) =>
-        item["영문명"] !== easyPick["영문명"] && !prevMenus.includes(item["영문명"])
+      const remaining = validMenus.filter(
+        (item) =>
+          item["영문명"] !== easyPick["영문명"] &&
+          !prevMenus.includes(item["영문명"])
       );
-
       const others = getRandomItems(remaining, 2);
       const allMenus = [easyPick, ...others];
-
-      const noOverlap = allMenus.every((item) => !prevMenus.includes(item["영문명"]));
+      const noOverlap = allMenus.every(
+        (item) => !prevMenus.includes(item["영문명"])
+      );
       if (others.length === 2 && noOverlap) {
         todaysMenus = allMenus;
         break;
@@ -93,14 +92,18 @@ function getRandomItems(arr, count) {
     }
 
     if (todaysMenus.length < 3) {
-      console.error("❌ 조건 만족 실패: 메뉴 수 부족 또는 중복 조건 과도.");
+      console.error("❌ 조건을 만족하는 메뉴를 찾지 못했습니다.");
       return;
     }
 
-    // 💾 Step 7: prev.json 저장
-    fs.writeFileSync(PREV_FILE, JSON.stringify(todaysMenus.map((m) => m["영문명"])), "utf8");
+    // 💾 Step 6: prev.json 저장
+    fs.writeFileSync(
+      PREV_FILE,
+      JSON.stringify(todaysMenus.map((m) => m["영문명"])),
+      "utf8"
+    );
 
-    // 📄 Step 8: index.html 생성
+    // 📄 Step 7: index.html 생성
     console.log("🛠 index.html 생성 중...");
     const html = `
 <!DOCTYPE html>
@@ -110,10 +113,50 @@ function getRandomItems(arr, count) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>오늘의 추천 메뉴</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; }
-    .menu { margin-bottom: 40px; }
-    img { width: 300px; border-radius: 12px; cursor: pointer; }
-    h2, p { margin: 10px 0; }
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #f5f5f5;
+      padding: 40px 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 40px;
+    }
+    .menu {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      max-width: 500px;
+      margin: 0 auto 40px auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .menu img {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .menu h2 {
+      font-size: 20px;
+      margin: 10px 0 6px;
+      color: #222;
+    }
+    .menu p {
+      font-size: 14px;
+      color: #666;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 10px;
+      }
+      .menu {
+        margin-bottom: 24px;
+      }
+    }
   </style>
   <script src="track-click.js"></script>
 </head>
@@ -122,7 +165,7 @@ function getRandomItems(arr, count) {
   ${todaysMenus
     .map((menu) => {
       const { 메뉴명, 영문명, 레시피영상링크, 난이도 } = menu;
-      const imgSrc = `images/${영문명}.jpg`;
+      const imgSrc = `menu-images/${영문명}.jpg`;  // ✅ 변경된 이미지 경로
       const desc = `난이도: ${난이도}` + (레시피영상링크 && 레시피영상링크 !== "-" ? ` | 🎥 영상 있음` : "");
       return `
       <div class="menu">
@@ -136,7 +179,6 @@ function getRandomItems(arr, count) {
     .join("\n")}
 </body>
 </html>`;
-
     fs.writeFileSync("index.html", html.trim(), "utf8");
     console.log("✅ index.html 생성 완료!");
 
