@@ -1,39 +1,42 @@
-
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-      <meta charset="UTF-8" />
-      <title>오늘의 추천 메뉴</title>
-      <style>
-        body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
-        .card {
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          padding: 10px;
-          margin-bottom: 20px;
-          background: #fff;
-          text-align: center;
-        }
-        .card img {
-          width: 100%;
-          max-width: 300px;
-          border-radius: 8px;
-          margin-bottom: 10px;
-        }
-        .card a {
-          text-decoration: none;
-          color: inherit;
-          display: block;
-        }
-        h2 {
-          margin: 0;
-          font-size: 20px;
-        }
-      </style>
-    </head>
-    <body>
-      <h1>오늘의 추천 메뉴</h1>
-      
-    </body>
-    </html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>오늘의 추천 메뉴</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    .menu { margin-bottom: 40px; }
+    img { width: 300px; border-radius: 12px; cursor: pointer; }
+    h2, p { margin: 10px 0; }
+  </style>
+  <script src="track-click.js"></script>
+</head>
+<body>
+  <h1>🍽 오늘의 추천 메뉴</h1>
   
+      <div class="menu">
+        <a href="html_files/Diner-style_Braised_Tofu.html" target="_blank" onclick="trackClick('Diner-style_Braised_Tofu')">
+          <img src="images/Diner-style_Braised_Tofu.jpg" alt="기사식당 두부조림">
+        </a>
+        <h2><a href="html_files/Diner-style_Braised_Tofu.html" target="_blank" onclick="trackClick('Diner-style_Braised_Tofu')">기사식당 두부조림</a></h2>
+        <p>난이도: 하 | 🎥 영상 있음</p>
+      </div>
+
+      <div class="menu">
+        <a href="html_files/Spicy_Stir-fried_Chicken.html" target="_blank" onclick="trackClick('Spicy_Stir-fried_Chicken')">
+          <img src="images/Spicy_Stir-fried_Chicken.jpg" alt="닭갈비">
+        </a>
+        <h2><a href="html_files/Spicy_Stir-fried_Chicken.html" target="_blank" onclick="trackClick('Spicy_Stir-fried_Chicken')">닭갈비</a></h2>
+        <p>난이도: 상 | 🎥 영상 있음</p>
+      </div>
+
+      <div class="menu">
+        <a href="html_files/Scorched_Rice_Chicken_Soup.html" target="_blank" onclick="trackClick('Scorched_Rice_Chicken_Soup')">
+          <img src="images/Scorched_Rice_Chicken_Soup.jpg" alt="누룽지삼계탕">
+        </a>
+        <h2><a href="html_files/Scorched_Rice_Chicken_Soup.html" target="_blank" onclick="trackClick('Scorched_Rice_Chicken_Soup')">누룽지삼계탕</a></h2>
+        <p>난이도: 상 | 🎥 영상 있음</p>
+      </div>
+</body>
+</html>
