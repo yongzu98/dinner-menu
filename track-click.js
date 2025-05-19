@@ -1,5 +1,5 @@
 function trackClick(menuName) {
-  fetch("https://script.google.com/macros/s/AKfycbzkHWbAcUq2OyIx0hWTnf-U-wIVFY1o05BIcE08O8SDy62FKUiIpDyv47BBKNlPDa0D/exec", { // YOUR_WEB_APP_URL 를 실제 웹 앱 URL로 변경
+  fetch("https://script.google.com/macros/s/AKfycbxkFlVYxY5Ol6gYFue9b3sYa09vsVsIX34qudX1o2RQGpS1wITHrwR09Mzt-A7zmFed/exec", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -9,5 +9,17 @@ function trackClick(menuName) {
       ua: navigator.userAgent,
       timestamp: new Date().toISOString()
     })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Success:', data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
   });
 }
