@@ -93,7 +93,6 @@ function getRandomItems(arr, count) {
       JSON.stringify(todaysMenus.map((m) => m["영문명"])),
       "utf8"
     );
-
     console.log("🛠 index.html 생성 중...");
     const html = `
 <!DOCTYPE html>
@@ -159,10 +158,10 @@ function getRandomItems(arr, count) {
       const desc = `난이도: ${난이도}` + (레시피영상링크 && 레시피영상링크 !== "-" ? ` | 🎥 영상 있음` : "");
       return `
   <div class="menu">
-    <a href="html_files/${영문명}.html" target="_blank" onclick="trackClick(&quot;${영문명}&quot;)">
+    <a href="html_files/${영문명}.html" target="_blank" onclick="trackClick('&quot;${영문명}&quot;')">
       <img src="${imgSrc}" alt="${메뉴명}">
     </a>
-    <h2><a href="html_files/${영문명}.html" target="_blank" onclick="trackClick(&quot;${영문명}&quot;)">${메뉴명}</a></h2>
+    <h2><a href="html_files/${영문명}.html" target="_blank" onclick="trackClick(&quot;${영문명}&quot;')">${메뉴명}</a></h2>
     <p>${desc}</p>
   </div>`;
     })
