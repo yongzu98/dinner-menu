@@ -5,7 +5,7 @@ function trackClick(menuName, userAgent) {
     timestamp: new Date().toISOString()
   };
 
-  fetch("https://script.google.com/macros/s/AKfycby6oyQFyU7MW9rgNOGx0YlB3BmzKUSJxRRNKMcw7g720_iyg3XPMdYpB6nisbaK6KBY/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbw0yXEAzAMt4UkbPevzG3sIg2Pgs1fSK1r6kzND343bhsSPdhEN95aGT6ehi47jgxYR/exec", {
     method: "POST",
     headers: {
       "Content-Type": "text/plain"   // 핵심 우회 포인트
