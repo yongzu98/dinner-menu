@@ -1,14 +1,23 @@
-function trackClick(menuName, userAgent) {
+function trackClick(menuName) {
+  const ua = navigator.userAgent;
+  const referrer = document.referrer || "direct";
+  const timestamp = new Date().toISOString();
+
+  // 아주 간단한 모바일/데스크탑 분류 (정밀하지는 않지만 실용적)
+  const deviceType = /Mobi|Android/i.test(ua) ? "Mobile" : "Desktop";
+
   const data = {
     menu: menuName,
-    ua: navigator.userAgent,
-    timestamp: new Date().toISOString()
+    ua: ua,
+    referrer: referrer,
+    deviceType: deviceType,
+    timestamp: timestamp
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbw0yXEAzAMt4UkbPevzG3sIg2Pgs1fSK1r6kzND343bhsSPdhEN95aGT6ehi47jgxYR/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzVJwRDmrFa0fUlLMGtkkJCAi59vzlwR81aH4QcRZIFxzKWymoNO0OVCUMHVzBo8t3a/exec", {
     method: "POST",
     headers: {
-      "Content-Type": "text/plain"   // 핵심 우회 포인트
+      "Content-Type": "text/plain"
     },
     body: JSON.stringify(data)
   });
