@@ -1,7 +1,7 @@
 function trackClick(menuName, userAgent) {
   const data = {
     menu: menuName,
-    ua: userAgent,
+    ua: navigator.userAgent,
     timestamp: new Date().toISOString()
   };
 
