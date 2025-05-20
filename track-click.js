@@ -1,5 +1,5 @@
 function trackClick(menuName) {
-  fetch("https://script.google.com/macros/s/AKfycbxEzXQnfzUmdBzGDaj_U-VFm2XRAclEwthP1bTFJIk36K3Ra6jiBpekPvlKIFItD6dg/exec", {
+  fetch("https://script.google.com/macros/s/AKfycby_NDlQ42sYEMByBhcgZLIg0QTzX4wnXsGIMWnXs3cpdxSGCYU7BrrJLWUL_FuQt1M/exec", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
